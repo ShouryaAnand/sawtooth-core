@@ -355,6 +355,13 @@ class _CandidateBlock(object):
 
             result = self._scheduler.get_batch_execution_result(
                 batch.header_signature)
+            # If a batch has empty transaction list, we add that batch
+            # to the bad_batches list so that it gets rejected.
+            if not batch.transactions :
+               bad_batches.append(batch)
+               LOGGER.debug("Batch %s has no transactions, not added to block.",
+                           batch.header_signature)
+               continue
             # if a result is None, this means that the executor never
             # received the batch and it should be added to
             # the pending_batches, to be added to the next
